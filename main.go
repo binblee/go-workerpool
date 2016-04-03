@@ -19,9 +19,8 @@ func (job SomethingAsJob) do() {
 type Worker struct {
 }
 
-func createWorker() Worker{
-  worker := Worker{}
-  return worker
+func NewWorker() *Worker{
+  return &Worker{}
 }
 
 func (worker *Worker) do(job Job) {
@@ -34,11 +33,11 @@ type WorkerPool struct {
 }
 
 func (wp *WorkerPool) run(){
-  wp.workerChannel = make(chan Worker,8)
+  wp.workerChannel = make(chan Worker,2)
   wp.jobQueue = make(chan Job)
 
   for i:=0; i<2; i++ {
-    wp.workerChannel <- createWorker()
+    wp.workerChannel <- *NewWorker()
   }
   go func(){
     for{
@@ -64,13 +63,13 @@ func main()  {
   workerPool.run()
 
   resultChan := make(chan string)
-  for i:=0; i<1000000; i++ {
+  for i:=0; i<100000; i++ {
     job := SomethingAsJob{ fmt.Sprintf("job #%d",i), resultChan }
     workerPool.submit(job)
   }
 
   for i:=0; i<10; i++ {
-    for j:=0; j<100000; j++{
+    for j:=0; j<10000; j++{
       <- resultChan
     }
     fmt.Printf("got result batch: %d\n", i)
