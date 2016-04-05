@@ -1,7 +1,7 @@
 package main
 import (
   "fmt"
-  "../workerpool"
+  "github.com/binblee/go-workerpool/workerpool"
 )
 
 type SomethingAsJob struct {
