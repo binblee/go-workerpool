@@ -4,28 +4,28 @@ type Job interface {
   Do()
 }
 
-type Worker struct {
+type worker struct {
 }
 
-func NewWorker() *Worker{
-  return &Worker{}
+func newWorker() *worker{
+  return &worker{}
 }
 
-func (worker *Worker) do(job Job) {
+func (worker *worker) do(job Job) {
     job.Do()
 }
 
 type WorkerPool struct {
-  workerChannel chan Worker
+  workerChannel chan worker
   jobQueue chan Job
 }
 
 func (wp *WorkerPool) Run(){
-  wp.workerChannel = make(chan Worker,2)
+  wp.workerChannel = make(chan worker,2)
   wp.jobQueue = make(chan Job)
 
   for i:=0; i<2; i++ {
-    wp.workerChannel <- *NewWorker()
+    wp.workerChannel <- *newWorker()
   }
   go func(){
     for{
