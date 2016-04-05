@@ -1,5 +1,9 @@
 package workerpool
 
+import (
+  "runtime"
+)
+
 type Job interface {
   Do()
 }
@@ -21,10 +25,11 @@ type WorkerPool struct {
 }
 
 func (wp *WorkerPool) Run(){
-  wp.workerChannel = make(chan worker,2)
+  maxNumOfWorkers := runtime.NumCPU()
+  wp.workerChannel = make(chan worker,maxNumOfWorkers)
   wp.jobQueue = make(chan Job)
 
-  for i:=0; i<2; i++ {
+  for i:=0; i < maxNumOfWorkers; i++ {
     wp.workerChannel <- *newWorker()
   }
   go func(){
